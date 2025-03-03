@@ -1,0 +1,59 @@
+name: Deploy V4 Site
+
+on:
+  schedule:
+    - cron: '0 7 * * *' # ron on 7am every day
+  # Allows manual workflow run (must in default branch to work)
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  build-and-deploy:
+    if: github.repository == 'youzan/vant'
+    runs-on: macos-14
+    steps:
+      - name: Checkout 🛎️
+        run: |
+          git clone https://github.com/youzan/vant.git --dpeth=1
+
+      - name: Install pnpm
+        run: |
+          cd vant && npm install -g corepack@latest --force 
+          corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: cd vant && pnpm install
+
+      - name: set public path
+        run: export PUBLIC_PATH=/mirror/vant
+        
+      - name: Build Site
+        run: cd vant && npm run build:site
+
+      - name: zip zite
+        uses: montudor/action-zip@v1
+        with:
+          args: zip -qq -r vant.zip ./vant/packages/vant/site-dist
+
+      - name: Generate release tag
+        id: tag
+        run: |
+          echo "::set-output name=release_tag::vant_$(date +"%Y.%m.%d_%H_%M_%S")"
+
+      - name: GH Release
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          files:  vant.zip
+
