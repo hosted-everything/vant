@@ -1,4 +1,4 @@
-name: Deploy V4 Site
+hname: Deploy V4 Site
 
 on:
   schedule:
@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Checkout 🛎️
         run: |
-          git clone https://github.com/youzan/vant.git --dpeth=1
+          git clone https://github.com/youzan/vant.git --depth=1
 
       - name: Install pnpm
         run: |
