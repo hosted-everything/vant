@@ -1,4 +1,4 @@
-hname: Deploy V4 Site
+name: Deploy V4 Site
 
 on:
   schedule:
