@@ -6,7 +6,7 @@ on:
   # Allows manual workflow run (must in default branch to work)
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 permissions:
@@ -15,7 +15,6 @@ permissions:
 
 jobs:
   build-and-deploy:
-    if: github.repository == 'youzan/vant'
     runs-on: macos-14
     steps:
       - name: Checkout 🛎️
